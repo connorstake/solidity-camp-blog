@@ -5,7 +5,6 @@ import {Test, console} from "forge-std/Test.sol";
 import {EnglishAuction, IERC721} from "../src/EnglishAuction.sol";
 import {ERC721} from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 
-// Add this contract before EnglishAuctionTest
 contract TestNFT is ERC721 {
     constructor() ERC721("Test", "TEST") {}
 
