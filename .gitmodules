@@ -1,3 +1,6 @@
 [submodule "ether-wallet/lib/forge-std"]
 	path = ether-wallet/lib/forge-std
 	url = https://github.com/foundry-rs/forge-std
+[submodule "english-auction/lib/forge-std"]
+	path = english-auction/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
