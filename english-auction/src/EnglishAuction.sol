@@ -5,6 +5,9 @@ interface IERC721 {
     function safeTransferFrom(address from, address to, uint256 tokenId)
         external;
     function transferFrom(address, address, uint256) external;
+    function mint(address to, uint256 tokenId) external;
+    function approve(address to, uint256 tokenId) external;
+    function ownerOf(uint256 tokenId) external view returns (address);
 }
 
 contract EnglishAuction {
@@ -22,18 +25,17 @@ contract EnglishAuction {
     uint256 private _highestBid;
     mapping(address => uint256) private _bids;
 
-    constructor(address nft, uint256 nftId, uint256 startingBid) {
-        _nft = IERC721(nft);
-        _nftId = nftId;
-
+    constructor(address _nftContract, uint256 _nftIdentifier, uint256 startingBid) {
+        _nft = IERC721(_nftContract);
+        _nftId = _nftIdentifier;
         _seller = payable(msg.sender);
-		_nft.transferFrom(msg.sender, address(this), _nftId);
         _highestBid = startingBid;
     }
 
     function start() external _onlySeller _auctionNotStarted {
         _started = true;
         _endAt = block.timestamp + 7 days;
+        _nft.transferFrom(msg.sender, address(this), _nftId);
     }
 
     function bid() external payable _auctionStarted _auctionEndTimeNotReached _bidLargerThanHighestBid {
