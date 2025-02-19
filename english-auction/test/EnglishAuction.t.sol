@@ -49,12 +49,12 @@ contract EnglishAuctionTest is Test {
 
     function test_bid() public {
         englishAuction.start();
-        englishAuction.bid{value: 10 ether}();
+        englishAuction.submitBid{value: 10 ether}();
         assertEq(englishAuction.highestBid(), 10 ether);
         assertEq(englishAuction.highestBidder(), address(this));
         // new bidder
         vm.startPrank(bidder);
-        englishAuction.bid{value: 11 ether}();
+        englishAuction.submitBid{value: 11 ether}();
         assertEq(englishAuction.highestBid(), 11 ether);
         assertEq(englishAuction.highestBidder(), bidder);
         vm.stopPrank();
@@ -62,21 +62,21 @@ contract EnglishAuctionTest is Test {
 
     function test_withdraw() public {
         englishAuction.start();
-        englishAuction.bid{value: 10 ether}();
+        englishAuction.submitBid{value: 10 ether}();
         assertEq(englishAuction.highestBid(), 10 ether);
         assertEq(englishAuction.highestBidder(), address(this));
         vm.startPrank(bidder);
-        englishAuction.bid{value: 11 ether}();
+        englishAuction.submitBid{value: 11 ether}();
         vm.stopPrank();
         assertEq(englishAuction.highestBid(), 11 ether);
         assertEq(englishAuction.highestBidder(), bidder);
-        englishAuction.withdraw();
+        englishAuction.withdrawBid();
         assertEq(englishAuction.bidsByBidder(address(this)), 0);
     }
 
     function test_close() public {
         englishAuction.start();
-        englishAuction.bid{value: 10 ether}();
+        englishAuction.submitBid{value: 10 ether}();
         // set time to 7 days in the future
         vm.warp(block.timestamp + 8 days);
         englishAuction.closeAndDistributeTokens();

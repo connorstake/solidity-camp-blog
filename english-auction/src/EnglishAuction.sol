@@ -38,12 +38,12 @@ contract EnglishAuction {
         _nft.transferFrom(msg.sender, address(this), _nftId);
     }
 
-    function bid() external payable _auctionStarted _auctionEndTimeNotReached _bidLargerThanHighestBid {
+    function submitBid() external payable _auctionStarted _auctionEndTimeNotReached _bidLargerThanHighestBid {
         _highestBidder = msg.sender;
         _highestBid = msg.value;
     }
 
-    function withdraw() external {
+    function withdrawBid() external {
         uint256 currentBid = _bids[msg.sender];
         _bids[msg.sender] = 0;
         payable(msg.sender).transfer(currentBid);
