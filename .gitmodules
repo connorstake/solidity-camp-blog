@@ -21,3 +21,6 @@
 [submodule "crowd-fund/lib/forge-std"]
 	path = crowd-fund/lib/forge-std
 	url = https://github.com/foundry-rs/forge-std
+[submodule "crowd-fund/lib/openzeppelin-contracts"]
+	path = crowd-fund/lib/openzeppelin-contracts
+	url = https://github.com/OpenZeppelin/openzeppelin-contracts
