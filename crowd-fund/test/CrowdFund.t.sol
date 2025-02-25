@@ -19,10 +19,10 @@ contract CrowdFundTest is Test {
     CrowdFund public crowdFund;
     IERC20 public token;
     address public pledger;
-
     function setUp() public {
         token = new TestToken();
-        crowdFund = new CrowdFund(address(token), 100 ether, Timeframe(block.timestamp + 100, block.timestamp + 500));
+
+        crowdFund = new CrowdFund(address(this), address(token), 100 ether, Timeframe(block.timestamp + 100, block.timestamp + 500));
         pledger = makeAddr("Pledger");
         TestToken(address(token)).mint(pledger, 100 ether);
     }
@@ -99,6 +99,19 @@ contract CrowdFundTest is Test {
         crowdFund.claim();
         assertEq(token.balanceOf(address(crowdFund)), 0);
         assertEq(token.balanceOf(address(this)), 100 ether);
+    }
+
+    function test_refund() public {
+        vm.warp(block.timestamp + 100);
+        vm.prank(pledger);
+        token.approve(address(crowdFund), 99 ether);
+        vm.prank(pledger);
+        crowdFund.pledge(99 ether);
+        assertEq(token.balanceOf(address(pledger)), 1 ether);
+        vm.warp(block.timestamp + 900);
+        vm.prank(pledger);
+        crowdFund.refund();
+        assertEq(token.balanceOf(address(pledger)), 100 ether);
     }
 }
 

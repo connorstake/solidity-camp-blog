@@ -15,7 +15,10 @@ contract CrowdFund {
     bool private _cancelled;
     mapping(address => uint256) private _pledgedAmount;
 
-    constructor(address c_token, uint256 c_goal, Timeframe memory c_timeframe) {
+    constructor(address c_creator, address c_token, uint256 c_goal, Timeframe memory c_timeframe) {
+        if (c_creator == address(0)) {
+            revert("creator must be a valid address");
+        }
         if (c_timeframe.start > c_timeframe.end) {
             revert("start must be before end");
         }
@@ -34,7 +37,7 @@ contract CrowdFund {
         _token = IERC20(c_token);
         _goal = c_goal;
         _timeframe = c_timeframe;
-        _creator = msg.sender;
+        _creator = c_creator;
     }
 
     function cancel() external _onlyCreator _notCancelled _notStarted {
@@ -75,6 +78,30 @@ contract CrowdFund {
     
     function pledged() public view returns (uint256) {
         return _pledged;
+    }
+
+    function creator() public view returns (address) {
+        return _creator;
+    }
+
+    function pledgedAmount(address _address) public view returns (uint256) {
+        return _pledgedAmount[_address];
+    }
+
+    function endTime() public view returns (uint256) {
+        return _timeframe.end;
+    }   
+
+    function startTime() public view returns (uint256) {
+        return _timeframe.start;
+    }
+
+    function token() public view returns (address) {
+        return address(_token);
+    }
+
+    function goal() public view returns (uint256) {
+        return _goal;
     }
 
     modifier _onlyCreator() {
