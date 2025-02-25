@@ -25,6 +25,7 @@ contract CrowdFundTest is Test {
         crowdFund = new CrowdFund(address(this), address(token), 100 ether, Timeframe(block.timestamp + 100, block.timestamp + 500));
         pledger = makeAddr("Pledger");
         TestToken(address(token)).mint(pledger, 100 ether);
+        TestToken(address(token)).mint(address(this), 100 ether);
     }
 
     function test_cancel() public {
@@ -88,6 +89,16 @@ contract CrowdFundTest is Test {
         crowdFund.removePledge(10 ether);
     }
 
+    function test_removePledge_when_no_pledged() public {
+        vm.warp(block.timestamp + 100);
+        token.approve(address(crowdFund), 10 ether);
+        crowdFund.pledge(10 ether);
+        vm.prank(pledger);
+        vm.expectRevert(); // arithmetic underflow
+        crowdFund.removePledge(10 ether);
+        vm.stopPrank();
+    }
+
     function test_claim() public {
         vm.warp(block.timestamp + 100);
         vm.prank(pledger);
@@ -98,7 +109,7 @@ contract CrowdFundTest is Test {
         vm.stopPrank();
         crowdFund.claim();
         assertEq(token.balanceOf(address(crowdFund)), 0);
-        assertEq(token.balanceOf(address(this)), 100 ether);
+        assertEq(token.balanceOf(address(this)), 200 ether); // 100 ether from pledge and 100 ether from mint
     }
 
     function test_refund() public {

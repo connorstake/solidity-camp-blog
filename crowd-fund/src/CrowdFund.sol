@@ -66,7 +66,7 @@ contract CrowdFund {
         _token.transfer(_creator, _pledged); 
     }
 
-    function refund() external _notCancelled _notClaimed _started _ended {
+    function refund() external _notCancelled _notClaimed _started _ended  _goalNotReached {
         uint256 pledged = _pledgedAmount[msg.sender];
         _token.transfer(msg.sender, pledged);
         _pledgedAmount[msg.sender] = 0;
